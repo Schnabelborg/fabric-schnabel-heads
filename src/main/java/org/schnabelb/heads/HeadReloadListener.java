@@ -16,15 +16,15 @@ public class HeadReloadListener implements SimpleSynchronousResourceReloadListen
 	}
 
 	@Override
-	public void reload(ResourceManager manager) {
-		System.out.println("LEMAORO");
+	public CompletableFuture<Void> reload(Synchronizer synchronizer, ResourceManager manager, Profiler prepareProfiler,
+			Profiler applyProfiler, Executor prepareExecutor, Executor applyExecutor) {
 		HeadsMod.loadItemData();
+		return synchronizer.whenPrepared(null);
 	}
 
 	@Override
-	public CompletableFuture<Void> reload(Synchronizer synchronizer, ResourceManager manager, Profiler prepareProfiler,
-			Profiler applyProfiler, Executor prepareExecutor, Executor applyExecutor) {
-		return null;
+	public void reload(ResourceManager manager) {
+		HeadsMod.loadItemData();
 	}
 
 
