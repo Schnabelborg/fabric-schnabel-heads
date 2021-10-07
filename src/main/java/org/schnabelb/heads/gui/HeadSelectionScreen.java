@@ -9,6 +9,9 @@ import org.schnabelb.heads.HeadsMod;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.texture.AbstractTexture;
+import net.minecraft.client.texture.ResourceTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -23,9 +26,10 @@ public class HeadSelectionScreen extends Screen {
 	private int selectedIndex;
 	private float time = 0;
 	private double accumulatedScrollDelta;
+	private AbstractTexture pickHeadTexture = new ResourceTexture(texture);
 
 	public HeadSelectionScreen(List<ItemStack> heads) {
-		super(Text.of("Kacka Pupu"));
+		super(Text.of("Pick Head"));
 		this.heads = new ArrayList<ItemStack>();
 		this.heads.addAll(heads);
 		this.selectedIndex = 0;
@@ -33,6 +37,7 @@ public class HeadSelectionScreen extends Screen {
 
 	@Override
 	protected void init() {
+		client.getTextureManager().registerTexture(texture, pickHeadTexture);
 		super.init();
 	}
 
@@ -40,7 +45,8 @@ public class HeadSelectionScreen extends Screen {
 	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 		matrixStack.push();
 		RenderSystem.enableBlend();
-		client.getTextureManager().bindTexture(texture);
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShaderTexture(0, texture);
 		drawTexture(matrixStack, this.width / 2 - 87, this.height / 2 - 57, 0, 0, 175, 75, 256, 256);
 		matrixStack.pop();
 		ItemStack selected = heads.get(this.selectedIndex);
@@ -58,9 +64,9 @@ public class HeadSelectionScreen extends Screen {
 			int x = this.width / 2 + i * itemWidth - itemWidth / 2 - xOffset;
 			matrixStack.push();
 			RenderSystem.enableBlend();
-			client.getTextureManager().bindTexture(texture);
+			RenderSystem.setShaderTexture(0, texture);
 			if((i == first && i > 0) || (i == last - 1 && i < heads.size() - 1)) {
-				//RenderSystem.color4f(1, 1, 1, 0.5F);
+				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.5F);
 			}
 			matrixStack.translate((double) x, (double) y, 0);
 			drawTexture(matrixStack, 0, 0, 0, 75, 25, 25, 256, 256);
@@ -90,7 +96,6 @@ public class HeadSelectionScreen extends Screen {
 
 	@Override
 	public boolean mouseScrolled(double x, double y, double scrollAmount) {
-		//double d0 = (this.client.options.discreteMouseScroll ? Math.signum(y) : y) * this.client.options.mouseWheelSensitivity;
 		if (this.accumulatedScrollDelta != 0.0D && Math.signum(scrollAmount) != Math.signum(this.accumulatedScrollDelta)) {
 			this.accumulatedScrollDelta = 0.0D;
 		}
@@ -109,7 +114,7 @@ public class HeadSelectionScreen extends Screen {
 			this.selectedIndex = this.selectedIndex >= this.heads.size() ? 0 : this.selectedIndex;
 		}
 		this.time = 0;
-		return true; // TODO: Das muehsemn wrir nohc am eings Ehnde aedndrern...
+		return true;
 	}
 
 	@Override
