@@ -99,6 +99,9 @@ public class HeadsMod implements ModInitializer {
 						ArrayList<Property> textures = Lists
 								.newArrayList(skullBE.getOwner().getProperties().get("textures"));
 						String texture = textures.get(0).getValue();
+						if(texture.startsWith("\"") && texture.endsWith("\"")) {
+							texture = texture.substring(1, texture.length() - 1);
+						}
 						result = getHeadByUrl(texture);
 						if (result.isEmpty()) {
 							result = getHead(texture, null, null);
@@ -179,7 +182,7 @@ public class HeadsMod implements ModInitializer {
 		NbtList textures = new NbtList();
 		NbtCompound texture = new NbtCompound();
 
-		texture.putString("Value", '\"' + url + '\"');
+		texture.putString("Value", url);
 		textures.add(texture);
 		properties.put("textures", textures);
 		skullOwner.putUuid("Id", UUID.fromString("8ea77fe0-23e8-427d-9a96-4c058c612c61"));
