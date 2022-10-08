@@ -42,6 +42,7 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.text.Text;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -55,6 +56,7 @@ public class HeadsMod implements ModInitializer {
 	public static final String MODID = "schnabelheads";
 
 	public static KeyBinding pickHead;
+	public static KeyBinding saveHead;
 
 	private static HeadDictionary blockMap;
 	private static List<ItemStack> loadedHeads;
@@ -71,9 +73,14 @@ public class HeadsMod implements ModInitializer {
 		blockMap = new HeadDictionary();
 		pickHead = KeyBindingHelper.registerKeyBinding(
 				new KeyBinding("key.schnabelheads.pickHead", GLFW.GLFW_KEY_V, "category.schnabelheads.keybinds"));
+		saveHead = KeyBindingHelper.registerKeyBinding(
+				new KeyBinding("key.schnabelheads.saveHead", GLFW.GLFW_KEY_B, "category.schnabelheads.keybinds"));
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (pickHead.wasPressed()) {
 				onPickHeadPressed(client);
+			}
+			if (saveHead.wasPressed()) {
+				onSaveHeadPressed(client);
 			}
 		});
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(headReloadListener);
@@ -99,7 +106,7 @@ public class HeadsMod implements ModInitializer {
 						ArrayList<Property> textures = Lists
 								.newArrayList(skullBE.getOwner().getProperties().get("textures"));
 						String texture = textures.get(0).getValue();
-						if(texture.startsWith("\"") && texture.endsWith("\"")) {
+						if (texture.startsWith("\"") && texture.endsWith("\"")) {
 							texture = texture.substring(1, texture.length() - 1);
 						}
 						result = getHeadByUrl(texture);
@@ -129,6 +136,13 @@ public class HeadsMod implements ModInitializer {
 				HeadSelectionScreen screen = new HeadSelectionScreen(availableHeads);
 				client.setScreen(screen);
 			}
+		}
+	}
+
+	private void onSaveHeadPressed(MinecraftClient client) {
+		ItemStack heldItem = client.player.getStackInHand(Hand.MAIN_HAND);
+		if (getHeadUrl(heldItem) != null) {
+			
 		}
 	}
 
@@ -295,7 +309,17 @@ public class HeadsMod implements ModInitializer {
 
 	}
 
-	private static ItemStack classicHead() {
+	private static String getHeadUrl(ItemStack head) {
+		if (head.getItem() == Items.PLAYER_HEAD) {
+			NbtCompound headNbt = head.getNbt();
+			if (headNbt != null && headNbt.contains("SkullOwner", NbtCompound.COMPOUND_TYPE)) {
+				return ((NbtCompound) headNbt.getCompound("SkullOwner").getCompound("Properties").getList("textures", NbtList.COMPOUND_TYPE).get(0)).getString("Value");
+			}
+		}
+		return null;
+	}
+	
+	public static ItemStack classicHead() {
 		NbtCompound tag = new NbtCompound();
 		tag.putString("SkullOwner", "Schnabelborg");
 
