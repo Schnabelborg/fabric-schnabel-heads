@@ -50,7 +50,7 @@ public class HeadSelectionScreen extends Screen {
 		drawTexture(matrixStack, this.width / 2 - 87, this.height / 2 - 57, 0, 0, 175, 75, 256, 256);
 		matrixStack.pop();
 		ItemStack selected = heads.get(this.selectedIndex);
-		drawCenteredText(matrixStack, this.textRenderer, selected.getName().asString(), this.width / 2,
+		drawCenteredText(matrixStack, this.textRenderer, selected.getName(), this.width / 2,
 				this.height / 2 - 50, TextColor.fromFormatting(Formatting.YELLOW).getRgb());
 		String num = (this.selectedIndex + 1) + "/" + this.heads.size();
 		drawCenteredText(matrixStack, this.textRenderer, num, this.width / 2,

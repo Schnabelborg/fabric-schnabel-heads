@@ -253,7 +253,7 @@ public class HeadsMod implements ModInitializer {
 				Text emsg = Text.of("\u00A7cError loading heads from \u00A74" + f.getName());
 				ClientPlayerEntity player = MinecraftClient.getInstance().player;
 				if (player != null) {
-					player.sendSystemMessage(emsg, player.getUuid());
+					player.sendMessage(emsg);
 				} else {
 					System.out.println("Error loading heads from " + f.getName());
 				}
@@ -295,7 +295,7 @@ public class HeadsMod implements ModInitializer {
 				Text emsg = Text.of("\u00A7cError loading heads");
 				ClientPlayerEntity player = MinecraftClient.getInstance().player;
 				if (player != null) {
-					player.sendSystemMessage(emsg, player.getUuid());
+					player.sendMessage(emsg);
 				} else {
 					System.out.println("Error loading heads");
 				}
