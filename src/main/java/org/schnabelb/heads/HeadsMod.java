@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import org.lwjgl.glfw.GLFW;
 import org.schnabelb.heads.gui.HeadSelectionScreen;
+import org.schnabelb.heads.gui.SaveHeadScreen;
 
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
@@ -140,9 +141,32 @@ public class HeadsMod implements ModInitializer {
 	}
 
 	private void onSaveHeadPressed(MinecraftClient client) {
-		ItemStack heldItem = client.player.getStackInHand(Hand.MAIN_HAND);
-		if (getHeadUrl(heldItem) != null) {
-			
+		HitResult raycast = client.crosshairTarget;
+		if (raycast.getType() == HitResult.Type.BLOCK) {
+			BlockPos pos = ((BlockHitResult) raycast).getBlockPos();
+			BlockState blockState = client.world.getBlockState(pos);
+			Block block = blockState.getBlock();
+			if (block == Blocks.PLAYER_HEAD || block == Blocks.PLAYER_WALL_HEAD) {
+				BlockEntity blockEntity = client.world.getBlockEntity(pos);
+				ItemStack result = new ItemStack(block.asItem());
+				if (blockEntity != null && blockEntity instanceof SkullBlockEntity) {
+					SkullBlockEntity skullBE = (SkullBlockEntity) blockEntity;
+					if (skullBE.getOwner() != null && skullBE.getOwner().getProperties() != null) {
+						ArrayList<Property> textures = Lists
+								.newArrayList(skullBE.getOwner().getProperties().get("textures"));
+						String texture = textures.get(0).getValue();
+						if (texture.startsWith("\"") && texture.endsWith("\"")) {
+							texture = texture.substring(1, texture.length() - 1);
+						}
+						result = getHeadByUrl(texture);
+						if (result.isEmpty()) {
+							result = getHead(texture, null, null);
+						}
+						SaveHeadScreen screen = new SaveHeadScreen();
+						client.setScreen(screen);
+					}
+				}
+			}
 		}
 	}
 
