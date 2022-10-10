@@ -5,13 +5,24 @@ import java.util.List;
 
 import org.lwjgl.glfw.GLFW;
 import org.schnabelb.heads.HeadsMod;
+import org.schnabelb.heads.injection.ItemRendererScaled;
+import org.schnabelb.heads.mixin.MixinItemRenderer;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.LightmapTextureManager;
+import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.model.BakedModel;
+import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.texture.ResourceTexture;
+import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -78,7 +89,7 @@ public class HeadSelectionScreen extends Screen {
 		}
 
 		this.time += partialTicks;
-		if (time >= 20) {
+		if (time >= 200) {
 			this.close();
 		}
 	}

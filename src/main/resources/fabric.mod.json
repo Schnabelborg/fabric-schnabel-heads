@@ -16,7 +16,7 @@
   "license": "CC0-1.0",
   "icon": "assets/schnabelheads/icon.png",
 
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
     "main": [
       "org.schnabelb.heads.HeadsMod"
@@ -30,5 +30,13 @@
   },
   "suggests": {
     "another-mod": "*"
+  },
+  "mixins": [
+    "schnabelheads.mixins.json"
+  ],
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_918": ["org/schnabelb/heads/injection/ItemRendererScaled"]
+    }
   }
 }
