@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.lwjgl.glfw.GLFW;
-import org.schnabelb.heads.gui.HeadSelectionScreen;
+import org.schnabelb.heads.gui.PickHeadScreen;
 import org.schnabelb.heads.gui.SaveHeadScreen;
 
 import com.google.common.collect.Lists;
@@ -134,7 +134,7 @@ public class HeadsMod implements ModInitializer {
 			} else if (availableHeads.size() == 1) {
 				givePickedHead(availableHeads.get(0), client);
 			} else {
-				HeadSelectionScreen screen = new HeadSelectionScreen(availableHeads);
+				PickHeadScreen screen = new PickHeadScreen(availableHeads);
 				client.setScreen(screen);
 			}
 		}

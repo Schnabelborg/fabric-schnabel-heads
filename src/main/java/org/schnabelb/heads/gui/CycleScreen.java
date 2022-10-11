@@ -1,6 +1,5 @@
 package org.schnabelb.heads.gui;
 
-import org.schnabelb.heads.HeadsMod;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.gui.screen.Screen;
@@ -16,23 +15,25 @@ import net.minecraft.util.Identifier;
 
 public abstract class CycleScreen extends Screen {
 
-	private static final Identifier texture = new Identifier(HeadsMod.MODID + ":" + "textures/gui/container/pick_head_screen.png");
 	protected int selectedIndex;
 	private float time = 0;
 	private double accumulatedScrollDelta;
-	private AbstractTexture pickHeadTexture = new ResourceTexture(texture);
 	private KeyBinding cycleKey;
+	private Identifier texturePath;
+	private AbstractTexture texture;
 	private float closeTimer = 20;
 	
-	public CycleScreen(Text title, KeyBinding cycleKey) {
+	public CycleScreen(Text title, KeyBinding cycleKey, Identifier texturePath) {
 		super(title);
 		this.selectedIndex = 0;
 		this.cycleKey = cycleKey;
+		this.texturePath = texturePath;
+		this.texture = new ResourceTexture(this.texturePath);
 	}
 
 	@Override
 	protected void init() {
-		client.getTextureManager().registerTexture(texture, pickHeadTexture);
+		client.getTextureManager().registerTexture(texturePath, texture);
 		super.init();
 	}
 
@@ -41,15 +42,15 @@ public abstract class CycleScreen extends Screen {
 		matrixStack.push();
 		RenderSystem.enableBlend();
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		RenderSystem.setShaderTexture(0, texture);
-		drawTexture(matrixStack, this.width / 2 - 87, this.height / 2 - 57, 0, 0, 175, 75, 256, 256);
+		RenderSystem.setShaderTexture(0, texturePath);
+		drawTexture(matrixStack, this.width / 2 - 84, this.height / 2 - 57, 0, 0, 168, 75, 256, 256);
 		matrixStack.pop();
 		drawCenteredText(matrixStack, this.textRenderer, this.getCurrentText(), this.width / 2,
 				this.height / 2 - 50, TextColor.fromFormatting(Formatting.YELLOW).getRgb());
 		String num = (this.selectedIndex + 1) + "/" + this.getCycleSize();
 		drawCenteredText(matrixStack, this.textRenderer, num, this.width / 2,
 				this.height / 2 + 7, TextColor.fromFormatting(Formatting.GRAY).getRgb());
-		int itemWidth = 16 + 9;
+		int itemWidth = 16 + 8;
 		int xOffset = selectedIndex * itemWidth;
 		int y = (this.height - itemWidth) / 2 - 20;
 		int first = Math.max(0, this.selectedIndex - 3);
@@ -58,17 +59,17 @@ public abstract class CycleScreen extends Screen {
 			int x = this.width / 2 + i * itemWidth - itemWidth / 2 - xOffset;
 			matrixStack.push();
 			RenderSystem.enableBlend();
-			RenderSystem.setShaderTexture(0, texture);
+			RenderSystem.setShaderTexture(0, texturePath);
 			if((i == first && i > 0) || (i == last - 1 && i < this.getCycleSize() - 1)) {
 				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.5F);
 			}
 			matrixStack.translate((double) x, (double) y, 0);
-			drawTexture(matrixStack, 0, 0, 0, 75, 25, 25, 256, 256);
+			drawTexture(matrixStack, 0, 0, 0, 75, 24, 24, 256, 256);
 			if (i == selectedIndex) {
-				drawTexture(matrixStack, 0, 0, 25, 75, 25, 25, 256, 256);
+				drawTexture(matrixStack, 0, 0, 24, 75, 24, 24, 256, 256);
 			}
 			matrixStack.pop();
-			this.drawElement(i, x + 5, y + 5);
+			this.drawElement(matrixStack, i, x + 4, y + 4);
 		}
 
 		this.time += partialTicks;
@@ -136,7 +137,7 @@ public abstract class CycleScreen extends Screen {
 
 	protected abstract int getCycleSize();
 
-	protected abstract void drawElement(int i, int x, int y);
+	protected abstract void drawElement(MatrixStack matrices, int i, int x, int y);
 
 	protected abstract void onClosed();
 

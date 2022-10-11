@@ -4,15 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.schnabelb.heads.HeadsMod;
+
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
-public class HeadSelectionScreen extends CycleScreen {
+public class PickHeadScreen extends CycleScreen {
 
 	private List<ItemStack> heads;
+	private static final Identifier texture = new Identifier(HeadsMod.MODID + ":" + "textures/gui/container/pick_head_screen.png");
 	
-	public HeadSelectionScreen(List<ItemStack> heads) {
-		super(Text.of("Pick Head"), HeadsMod.pickHead);
+	public PickHeadScreen(List<ItemStack> heads) {
+		super(Text.of("Pick Head"), HeadsMod.pickHead, texture);
 		this.heads = new ArrayList<ItemStack>();
 		this.heads.addAll(heads);
 	}
@@ -23,7 +27,7 @@ public class HeadSelectionScreen extends CycleScreen {
 	}
 
 	@Override
-	protected void drawElement(int i, int x, int y) {
+	protected void drawElement(MatrixStack matrices, int i, int x, int y) {
 		this.itemRenderer.renderGuiItemIcon(heads.get(i), x, y);
 	}
 

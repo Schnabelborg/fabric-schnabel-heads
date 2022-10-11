@@ -6,16 +6,18 @@ import org.schnabelb.heads.HeadsMod;
 
 import com.google.common.collect.Lists;
 
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 public class SaveHeadScreen extends CycleScreen {
 
 	private List<ItemStack> sets = Lists.newArrayList();
+	private static final Identifier texture = new Identifier(HeadsMod.MODID + ":" + "textures/gui/container/save_head_screen.png");
 
 	public SaveHeadScreen() {
-		super(Text.of("Save head"), HeadsMod.saveHead);
+		super(Text.of("Save head"), HeadsMod.saveHead, texture);
 	}
 
 	@Override
@@ -39,13 +41,13 @@ public class SaveHeadScreen extends CycleScreen {
 	}
 
 	@Override
-	protected void drawElement(int i, int x, int y) {
+	protected void drawElement(MatrixStack matrices, int i, int x, int y) {
 		switch(i) {
 		case 0:
-			this.itemRenderer.renderGuiItemIcon(new ItemStack(Items.BARRIER), x, y);
+			drawTexture(matrices, x, y, 32, 99, 16, 16, 256, 256);
 			break;
 		case 1:
-			this.itemRenderer.renderGuiItemIcon(new ItemStack(Items.LIME_DYE), x, y);
+			drawTexture(matrices, x, y, 0, 99, 16, 16, 256, 256);
 			break;
 		default:
 			this.itemRenderer.renderGuiItemIcon(sets.get(i - 2), x, y);
