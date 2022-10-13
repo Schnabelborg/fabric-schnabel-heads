@@ -1,8 +1,12 @@
 package org.schnabelb.heads.gui;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
+import org.schnabelb.heads.HeadSet;
 import org.schnabelb.heads.HeadsMod;
+import org.schnabelb.heads.SetManager;
 
 import com.google.common.collect.Lists;
 
@@ -13,11 +17,12 @@ import net.minecraft.util.Identifier;
 
 public class SaveHeadScreen extends CycleScreen {
 
-	private List<ItemStack> sets = Lists.newArrayList();
+	private ArrayList<HeadSet> sets;
 	private static final Identifier texture = new Identifier(HeadsMod.MODID + ":" + "textures/gui/container/save_head_screen.png");
 
 	public SaveHeadScreen() {
 		super(Text.of("Save head"), HeadsMod.saveHead, texture);
+		this.sets = HeadsMod.getSetManager().getSets();
 	}
 
 	@Override
@@ -28,7 +33,7 @@ public class SaveHeadScreen extends CycleScreen {
 		case 1:
 			return "Create new set...";
 		default:
-			return this.sets.get(this.selectedIndex - 2).getName().getString();
+			return this.sets.get(this.selectedIndex - 2).getDisplayName();
 		}
 	}
 
@@ -50,7 +55,7 @@ public class SaveHeadScreen extends CycleScreen {
 			drawTexture(matrices, x, y, 0, 99, 16, 16, 256, 256);
 			break;
 		default:
-			this.itemRenderer.renderGuiItemIcon(sets.get(i - 2), x, y);
+			this.itemRenderer.renderGuiItemIcon(sets.get(i - 2).getIcon().toItemStack(), x, y);
 			break;
 		}
 		

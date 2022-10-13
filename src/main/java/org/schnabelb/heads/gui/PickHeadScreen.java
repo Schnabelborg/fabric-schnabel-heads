@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.schnabelb.heads.HeadsMod;
+import org.schnabelb.heads.listener.KeyListener;
 
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
@@ -33,7 +34,7 @@ public class PickHeadScreen extends CycleScreen {
 
 	@Override
 	protected void onClosed() {
-		HeadsMod.givePickedHead(heads.get(this.selectedIndex), this.client);		
+		KeyListener.givePickedHead(heads.get(this.selectedIndex), this.client);		
 	}
 
 	@Override

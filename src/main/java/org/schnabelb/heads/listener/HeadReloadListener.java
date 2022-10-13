@@ -1,7 +1,9 @@
-package org.schnabelb.heads;
+package org.schnabelb.heads.listener;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+
+import org.schnabelb.heads.HeadsMod;
 
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.ResourceManager;
