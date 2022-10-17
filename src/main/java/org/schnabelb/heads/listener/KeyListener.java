@@ -91,7 +91,10 @@ public class KeyListener {
 				if (blockEntity != null && blockEntity instanceof SkullBlockEntity) {
 					SkullBlockEntity skullBE = (SkullBlockEntity) blockEntity;
 					if (skullBE.getOwner() != null && skullBE.getOwner().getProperties() != null) {
-						SaveHeadScreen screen = new SaveHeadScreen();
+						ArrayList<Property> textures = Lists
+								.newArrayList(skullBE.getOwner().getProperties().get("textures"));
+						String texture = textures.get(0).getValue();
+						SaveHeadScreen screen = new SaveHeadScreen(new Head("", texture));
 						client.setScreen(screen);
 					}
 				}

@@ -1,28 +1,23 @@
 package org.schnabelb.heads.gui;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
-
+import org.schnabelb.heads.Head;
 import org.schnabelb.heads.HeadSet;
 import org.schnabelb.heads.HeadsMod;
-import org.schnabelb.heads.SetManager;
-
-import com.google.common.collect.Lists;
-
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class SaveHeadScreen extends CycleScreen {
 
 	private ArrayList<HeadSet> sets;
+	private Head head;
 	private static final Identifier texture = new Identifier(HeadsMod.MODID + ":" + "textures/gui/container/save_head_screen.png");
 
-	public SaveHeadScreen() {
+	public SaveHeadScreen(Head head) {
 		super(Text.of("Save head"), HeadsMod.saveHead, texture);
 		this.sets = HeadsMod.getSetManager().getSets();
+		this.head = head;
 	}
 
 	@Override
@@ -46,7 +41,7 @@ public class SaveHeadScreen extends CycleScreen {
 	}
 
 	@Override
-	protected void drawElement(MatrixStack matrices, int i, int x, int y) {
+	protected void drawElement(MatrixStack matrices, int i, int x, int y) {		
 		switch(i) {
 		case 0:
 			drawTexture(matrices, x, y, 32, 99, 16, 16, 256, 256);
@@ -55,7 +50,12 @@ public class SaveHeadScreen extends CycleScreen {
 			drawTexture(matrices, x, y, 0, 99, 16, 16, 256, 256);
 			break;
 		default:
-			this.itemRenderer.renderGuiItemIcon(sets.get(i - 2).getIcon().toItemStack(), x, y);
+			Head icon = sets.get(i - 2).getIcon();
+			if(icon == null) {
+				drawTexture(matrices, x, y, 16, 99, 16, 16, 256, 256);
+			} else {
+				this.itemRenderer.renderGuiItemIcon(icon.toItemStack(), x, y);
+			}
 			break;
 		}
 		
@@ -63,7 +63,13 @@ public class SaveHeadScreen extends CycleScreen {
 
 	@Override
 	protected void onClosed() {
-		this.client.player.sendMessage(this.title);
+		if (this.selectedIndex == 1) {
+			CreateSetScreen screen = new CreateSetScreen(this.head);
+			this.client.setScreen(screen);
+		} else if(this.selectedIndex > 1) {
+			sets.get(this.selectedIndex - 2).addHead(this.head);
+		}
+		
 	}
 
 }

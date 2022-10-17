@@ -50,6 +50,9 @@ public class HeadSet {
 		if (this.icon != null) {
 			return icon;			
 		}
+		if(this.heads.isEmpty()) {
+			return null;
+		}
 		this.icon = heads.get(0);
 		return icon;
 	}
