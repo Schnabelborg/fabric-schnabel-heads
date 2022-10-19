@@ -11,15 +11,18 @@ public class HeadSet {
 	private String description;
 	private Head icon;
 	private String author;
+	private long lastChanged;
+	private boolean custom;
 	
 	public HeadSet(String id, String displayName) {
-		this(id, displayName, new ArrayList<Head>());
+		this(id, displayName, new ArrayList<Head>(), System.currentTimeMillis());
 	}
 	
-	public HeadSet(String id, String displayName, List<Head> heads) {
+	public HeadSet(String id, String displayName, List<Head> heads, long lastChanged) {
 		this.id = id;
 		this.displayName = displayName;
 		this.heads = heads;
+		this.lastChanged = lastChanged;
 	}
 	
 	public void addHead(Head head) {
@@ -56,6 +59,10 @@ public class HeadSet {
 		this.icon = heads.get(0);
 		return icon;
 	}
+	
+	public int getIconIndex() {
+		return this.getHeads().indexOf(this.getIcon());
+	}
 
 	public void setIcon(Head icon) {
 		this.icon = icon;
@@ -72,5 +79,27 @@ public class HeadSet {
 	public String getId() {
 		return id;
 	}
+	
+	public long getLastChanged() {
+		return this.lastChanged;
+	}
+
+	public void setLastChanged(long lastChanged) {
+		this.lastChanged = lastChanged;
+	}
+
+	public boolean isCustom() {
+		return custom;
+	}
+
+	public void setCustom(boolean custom) {
+		this.custom = custom;
+	}
+
+	public void save() {
+		this.lastChanged = System.currentTimeMillis();
+		HeadsMod.getSetManager().saveToFile(this);
+	}
+	
 	
 }

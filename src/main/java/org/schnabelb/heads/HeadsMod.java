@@ -5,12 +5,19 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.lwjgl.glfw.GLFW;
 import org.schnabelb.heads.listener.HeadReloadListener;
 import org.schnabelb.heads.listener.KeyListener;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
@@ -76,14 +83,25 @@ public class HeadsMod implements ModInitializer {
 		if (!setsFolder.exists()) {
 			setsFolder.mkdirs();
 		}
-		File[] setFiles = setsFolder.listFiles(new FilenameFilter() {
+		File customSetsFolder = new File(mcDir + SETS_PATH + "/user");
+		if (!customSetsFolder.exists()) {
+			customSetsFolder.mkdirs();
+		}
+
+		List<File> setFiles = new ArrayList<File>();
+		FilenameFilter jsonFilter = new FilenameFilter() {
 			@Override
 			public boolean accept(File f, String s) {
 				return s.toLowerCase().endsWith(".json");
 			}
-		});
-		if (setFiles == null) {
-			return;
+		};
+		File[] found = setsFolder.listFiles(jsonFilter);
+		if (found != null) {
+			setFiles.addAll(Arrays.asList(found));
+		}
+		found = customSetsFolder.listFiles(jsonFilter);
+		if (found != null) {
+			setFiles.addAll(Arrays.asList(found));
 		}
 		JsonParser parser = new JsonParser();
 		for (File f : setFiles) {
@@ -91,7 +109,10 @@ public class HeadsMod implements ModInitializer {
 			try {
 				reader = new BufferedReader(new FileReader(f));
 				JsonObject object = parser.parse(reader).getAsJsonObject();
-				setManager.parseJsonSet(object);
+				HeadSet set = setManager.parseJsonSet(object);
+				set.setLastChanged(Files.getLastModifiedTime(Paths.get(f.getPath())).toMillis());
+				boolean custom = !Paths.get(f.getParent()).equals(Paths.get(setsFolder.getPath()));
+				set.setCustom(custom);
 			} catch (Exception e) {
 				e.printStackTrace();
 				Text emsg = Text.of("\u00A7cError loading heads from \u00A74" + f.getName());

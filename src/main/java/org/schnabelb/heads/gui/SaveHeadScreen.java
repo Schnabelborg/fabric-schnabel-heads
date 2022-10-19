@@ -1,6 +1,8 @@
 package org.schnabelb.heads.gui;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+
 import org.schnabelb.heads.Head;
 import org.schnabelb.heads.HeadSet;
 import org.schnabelb.heads.HeadsMod;
@@ -17,6 +19,7 @@ public class SaveHeadScreen extends CycleScreen {
 	public SaveHeadScreen(Head head) {
 		super(Text.of("Save head"), HeadsMod.saveHead, texture);
 		this.sets = HeadsMod.getSetManager().getSets();
+		sets.sort(Comparator.comparingLong(HeadSet::getLastChanged).reversed());
 		this.head = head;
 	}
 
@@ -67,7 +70,8 @@ public class SaveHeadScreen extends CycleScreen {
 			CreateSetScreen screen = new CreateSetScreen(this.head);
 			this.client.setScreen(screen);
 		} else if(this.selectedIndex > 1) {
-			sets.get(this.selectedIndex - 2).addHead(this.head);
+			HeadSet set = sets.get(this.selectedIndex - 2);
+			this.client.setScreen(new NameHeadScreen(this.head, set));
 		}
 		
 	}

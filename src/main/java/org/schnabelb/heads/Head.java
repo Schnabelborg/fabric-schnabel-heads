@@ -1,5 +1,7 @@
 package org.schnabelb.heads;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import net.minecraft.item.ItemStack;
@@ -10,12 +12,26 @@ import net.minecraft.nbt.NbtString;
 
 public class Head {
 
+	private List<String> blocks;
 	private String name;
 	private String url;
 	
-	public Head(String name, String url) {
+	public Head(String name, String url, List<String> blocks) {
 		this.name = name;
 		this.url = url;
+		this.blocks = blocks;
+	}
+	
+	public Head(String name, String url) {
+		this(name, url, new ArrayList<String>());
+	}
+
+	public List<String> getBlocks() {
+		return blocks;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getName() {

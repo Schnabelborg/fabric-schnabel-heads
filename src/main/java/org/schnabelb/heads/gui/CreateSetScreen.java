@@ -22,6 +22,7 @@ public class CreateSetScreen extends Screen {
 	private static final String SET_DESCRIPTION_SUGGESTION = "Set description...";
 	private static final String SET_NAME_SUGGESTION = "Set name...";
 	private ButtonWidget doneButton;
+	@SuppressWarnings("unused")
 	private ButtonWidget cancelButton;
 	private TextFieldWidget setNameTextField;
 	private TextFieldWidget setDescriptionTextField;
@@ -120,11 +121,12 @@ public class CreateSetScreen extends Screen {
 	
 	private void commitAndClose() {
 		HeadSet set = new HeadSet(UUID.randomUUID().toString(), this.setNameTextField.getText());
-		set.addHead(head);
 		set.setDescription(this.setDescriptionTextField.getText());
-		set.setAuthor(this.client.player.getDisplayName().toString());
+		set.setAuthor(this.client.player.getDisplayName().getString());
 		HeadsMod.getSetManager().addSet(set);
+		set.save();
 		this.close();
+		this.client.setScreen(new NameHeadScreen(this.head, set));
 	}
 	
 	
