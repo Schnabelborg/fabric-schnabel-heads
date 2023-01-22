@@ -8,6 +8,8 @@
   "client": [
     "ItemRendererAccessor",
 	"HandledScreenAccessor",
+	"CreativeInventoryAccessor",
+	"CreativeInventoryMixin",
 	"MixinHandledScreen"
   ],
   "injectors": {

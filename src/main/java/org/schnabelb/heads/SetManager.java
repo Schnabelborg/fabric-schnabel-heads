@@ -198,5 +198,11 @@ public class SetManager {
 	public ArrayList<HeadSet> getSets() {
 		return new ArrayList<HeadSet>(this.sets.values());
 	}
+	
+	public List<Head> getAllHeads(){
+		List<Head> result = new ArrayList<Head>();
+		this.getSets().forEach(set -> result.addAll(set.getHeads()));
+		return result;
+	}
 
 }
