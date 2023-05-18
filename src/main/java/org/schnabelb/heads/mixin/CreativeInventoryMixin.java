@@ -1,7 +1,10 @@
 package org.schnabelb.heads.mixin;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.lwjgl.glfw.GLFW;
 import org.schnabelb.heads.Head;
@@ -22,6 +25,7 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.text.Text;
 
 @Mixin(CreativeInventoryScreen.class)
@@ -33,7 +37,7 @@ public abstract class CreativeInventoryMixin extends AbstractInventoryScreen<Cre
 
 	@Inject(method = "search()V", at = @At("HEAD"), cancellable = true)
 	private void search(CallbackInfo info) {
-		ItemGroup itemGroup = ItemGroup.GROUPS[((CreativeInventoryAccessor)this).invokeGetSelectedTab()];
+		ItemGroup itemGroup = ((CreativeInventoryAccessor)this).getSelectedTab();
 		if(itemGroup == HeadsMod.SCHNABEL_HEADS) {
 			((CreativeScreenHandler) this.handler).itemList.clear();
 			((CreativeInventoryAccessor) this).getSearchResultTags().clear();
@@ -45,7 +49,9 @@ public abstract class CreativeInventoryMixin extends AbstractInventoryScreen<Cre
 			} else {
 				SearchProvider<ItemStack> searchProvider;
 				searchProvider = this.client.getSearchProvider(SearchManager.ITEM_TOOLTIP);
-				((CreativeScreenHandler)this.handler).itemList.addAll(searchProvider.findAll(query.toLowerCase(Locale.ROOT)));
+				List<ItemStack> searchResult = searchProvider.findAll(query.toLowerCase(Locale.ROOT));
+				searchResult = searchResult.stream().filter((itemStack) -> itemStack.getItem() == Items.PLAYER_HEAD).collect(Collectors.toList());
+				((CreativeScreenHandler)this.handler).itemList.addAll(searchResult);
 			}
 			((CreativeInventoryAccessor) this).setScrollPosition(0.0f);
 			((CreativeScreenHandler)this.handler).scrollItems(0.0f);
@@ -62,8 +68,13 @@ public abstract class CreativeInventoryMixin extends AbstractInventoryScreen<Cre
                 searchBox.setVisible(true);
                 searchBox.setFocusUnlocked(false);
                 searchBox.setTextFieldFocused(true);
-                searchBox.setText("");
+                searchBox.setText("Pomseso");
+                searchBox.setX(this.x + 100);
+                searchBox.setWidth(62);
                 ((CreativeInventoryAccessor)this).invokeSearch();
+            } else {
+            	searchBox.setX(this.x + 82);
+                searchBox.setWidth(80);
             }
         }
 	}
@@ -74,7 +85,7 @@ public abstract class CreativeInventoryMixin extends AbstractInventoryScreen<Cre
         if (accessor.getIgnoreTypedCharacter()) {
             return;
         }
-		ItemGroup itemGroup = ItemGroup.GROUPS[accessor.invokeGetSelectedTab()];
+		ItemGroup itemGroup = accessor.getSelectedTab();;
 		if(itemGroup != HeadsMod.SCHNABEL_HEADS) {
 			System.out.println("Not the head tab");
             return;
@@ -97,9 +108,9 @@ public abstract class CreativeInventoryMixin extends AbstractInventoryScreen<Cre
 	@Inject(method = "keyPressed(III)Z", at = @At("HEAD"), cancellable = true)
     private void keyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> info) {
 		CreativeInventoryAccessor accessor = ((CreativeInventoryAccessor)this);
-		ItemGroup itemGroup = ItemGroup.GROUPS[accessor.invokeGetSelectedTab()];
+		ItemGroup itemGroup = accessor.getSelectedTab();
 		if(itemGroup == HeadsMod.SCHNABEL_HEADS) {
-			boolean bl = !accessor.invokeIsCreativeInventorySlot(accessor.getFocusedSlot()) || accessor.getFocusedSlot().hasStack();
+			boolean bl = !accessor.invokeIsCreativeInventorySlot(this.focusedSlot) || this.focusedSlot.hasStack();
 	        boolean bl2 = InputUtil.fromKeyCode(keyCode, scanCode).toInt().isPresent();
 	        if (bl && bl2 && this.handleHotbarKeyPressed(keyCode, scanCode)) {
 	            accessor.setIgnoreTypedCharacter(true);

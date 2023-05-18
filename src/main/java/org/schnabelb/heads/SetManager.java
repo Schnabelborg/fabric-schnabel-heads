@@ -68,7 +68,7 @@ public class SetManager {
 				itemList.add(head.toItemStack());
 			});
 			for (int i = 0; i < (9 - (set.getHeads().size() % 9)) % 9; i++) {
-				itemList.add(ItemStack.EMPTY);
+				//itemList.add(ItemStack.EMPTY);
 			}
 		});
 		return itemList;

@@ -20,8 +20,9 @@ import com.google.gson.JsonParser;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.client.MinecraftClient;
@@ -48,10 +49,8 @@ public class HeadsMod implements ModInitializer {
 	private static SetManager setManager;
 
 	private IdentifiableResourceReloadListener headReloadListener = new HeadReloadListener();
-	public static final ItemGroup SCHNABEL_HEADS = FabricItemGroupBuilder.create(new Identifier(MODID, "heads"))
-			.icon(() -> classicHead()).appendItems(stacks -> {
-				stacks.addAll(setManager.fillCreativeTab());
-			}).build();
+	public static final ItemGroup SCHNABEL_HEADS = FabricItemGroup.builder(new Identifier(MODID, "heads"))
+			.icon(() -> classicHead()).texture("schnabelheads_search.png").build();
 
 	@Override
 	public void onInitialize() {
@@ -71,6 +70,12 @@ public class HeadsMod implements ModInitializer {
 		});
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(headReloadListener);
 		loadItemData();
+		ItemGroupEvents.modifyEntriesEvent(SCHNABEL_HEADS).register(content -> {
+			content.addAll(setManager.fillCreativeTab());
+		});
+		/*.entries(stacks -> {
+			stacks.addAll(setManager.fillCreativeTab());
+		})*/
 		System.out.println("Schnabelheads loaded");
 	}
 

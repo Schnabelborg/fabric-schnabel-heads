@@ -41,7 +41,7 @@ public abstract class CycleScreen extends Screen {
 	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 		matrixStack.push();
 		RenderSystem.enableBlend();
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShader(GameRenderer::getPositionTexProgram);
 		RenderSystem.setShaderTexture(0, texturePath);
 		drawTexture(matrixStack, this.width / 2 - 84, this.height / 2 - 57, 0, 0, 168, 75, 256, 256);
 		matrixStack.pop();

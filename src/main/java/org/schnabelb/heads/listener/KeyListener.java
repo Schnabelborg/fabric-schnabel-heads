@@ -19,11 +19,11 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
 
 public class KeyListener {
 
@@ -33,7 +33,7 @@ public class KeyListener {
 			BlockPos pos = ((BlockHitResult) raycast).getBlockPos();
 			BlockState blockState = client.world.getBlockState(pos);
 			Block block = blockState.getBlock();
-			Identifier id = Registry.BLOCK.getId(block);
+			Identifier id = Registries.BLOCK.getId(block);
 			List<Head> heads = HeadsMod.getBlockDictionary().get(id.getPath());
 			List<ItemStack> availableHeads = new ArrayList<ItemStack>(heads.stream().map(head -> head.toItemStack()).toList());
 

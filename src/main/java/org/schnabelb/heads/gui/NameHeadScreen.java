@@ -33,10 +33,10 @@ public class NameHeadScreen extends Screen {
 
 	@Override
     protected void init() {
-        this.client.keyboard.setRepeatEvents(true);
-        this.doneButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 4 - 150, this.height / 4 + 120 + 12, 150, 20, ScreenTexts.DONE, button -> this.commitAndClose()));
+        //this.client.keyboard.setRepeatEvents(true);
+        this.doneButton = this.addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, button -> this.commitAndClose()).dimensions(this.width / 2 - 4 - 150, this.height / 4 + 120 + 12, 150, 20).build());
         this.doneButton.active = false;
-        this.cancelButton = this.addDrawableChild(new ButtonWidget(this.width / 2 + 4, this.height / 4 + 120 + 12, 150, 20, ScreenTexts.CANCEL, button -> this.close()));
+        this.cancelButton = this.addDrawableChild(ButtonWidget.builder(ScreenTexts.CANCEL, button -> this.close()).dimensions(this.width / 2 + 4, this.height / 4 + 120 + 12, 150, 20).build());
         String headName;
         if(this.headNameTextField != null) {
         	headName = this.headNameTextField.getText();
@@ -84,7 +84,7 @@ public class NameHeadScreen extends Screen {
 	
 	@Override
     public void removed() {
-        this.client.keyboard.setRepeatEvents(false);
+        //this.client.keyboard.setRepeatEvents(false);
     }
 	
 	@Override
