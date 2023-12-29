@@ -8,11 +8,10 @@ import org.schnabelb.heads.HeadsMod;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.texture.ResourceTexture;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
@@ -42,18 +41,16 @@ public class HeadSelectionScreen extends Screen {
 	}
 
 	@Override
-	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-		matrixStack.push();
+	public void render(DrawContext context, int mouseX, int mouseY, float partialTicks) {
+		context.getMatrices().push();
 		RenderSystem.enableBlend();
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		RenderSystem.setShaderTexture(0, texture);
-		drawTexture(matrixStack, this.width / 2 - 87, this.height / 2 - 57, 0, 0, 175, 75, 256, 256);
-		matrixStack.pop();
+		context.drawTexture(texture, this.width / 2 - 87, this.height / 2 - 57, 0, 0, 175, 75, 256, 256);
+		context.getMatrices().pop();
 		ItemStack selected = heads.get(this.selectedIndex);
-		drawCenteredText(matrixStack, this.textRenderer, selected.getName(), this.width / 2,
+		context.drawCenteredTextWithShadow(this.textRenderer, selected.getName(), this.width / 2,
 				this.height / 2 - 50, TextColor.fromFormatting(Formatting.YELLOW).getRgb());
 		String num = (this.selectedIndex + 1) + "/" + this.heads.size();
-		drawCenteredText(matrixStack, this.textRenderer, num, this.width / 2,
+		context.drawCenteredTextWithShadow(this.textRenderer, num, this.width / 2,
 				this.height / 2 + 7, TextColor.fromFormatting(Formatting.GRAY).getRgb());
 		int itemWidth = 16 + 9;
 		int xOffset = selectedIndex * itemWidth;
@@ -62,19 +59,19 @@ public class HeadSelectionScreen extends Screen {
 		int last = Math.min(heads.size(), this.selectedIndex + 4);
 		for (int i = first; i < last; i++) {
 			int x = this.width / 2 + i * itemWidth - itemWidth / 2 - xOffset;
-			matrixStack.push();
+			context.getMatrices().push();
 			RenderSystem.enableBlend();
-			RenderSystem.setShaderTexture(0, texture);
+			//RenderSystem.setShaderTexture(0, texture);
 			if((i == first && i > 0) || (i == last - 1 && i < heads.size() - 1)) {
 				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.5F);
 			}
-			matrixStack.translate((double) x, (double) y, 0);
-			drawTexture(matrixStack, 0, 0, 0, 75, 25, 25, 256, 256);
+			context.getMatrices().translate((double) x, (double) y, 0);
+			context.drawTexture(texture, 0, 0, 0, 75, 25, 25, 256, 256);
 			if (i == selectedIndex) {
-				drawTexture(matrixStack, 0, 0, 25, 75, 25, 25, 256, 256);
+				context.drawTexture(texture, 0, 0, 25, 75, 25, 25, 256, 256);
 			}
-			matrixStack.pop();
-			this.itemRenderer.renderGuiItemIcon(heads.get(i), x + 5, y + 5);
+			context.getMatrices().pop();
+			context.drawItem(heads.get(i), x + 5, y + 5);
 		}
 
 		this.time += partialTicks;
@@ -95,7 +92,7 @@ public class HeadSelectionScreen extends Screen {
 	}
 
 	@Override
-	public boolean mouseScrolled(double x, double y, double scrollAmount) {
+	public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double scrollAmount) {
 		if (this.accumulatedScrollDelta != 0.0D && Math.signum(scrollAmount) != Math.signum(this.accumulatedScrollDelta)) {
 			this.accumulatedScrollDelta = 0.0D;
 		}

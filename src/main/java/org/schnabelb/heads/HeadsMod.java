@@ -21,8 +21,8 @@ import com.mojang.authlib.properties.Property;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.block.Block;
@@ -40,6 +40,8 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
@@ -47,7 +49,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
 
 @SuppressWarnings("resource")
 public class HeadsMod implements ModInitializer {
@@ -61,8 +62,11 @@ public class HeadsMod implements ModInitializer {
 	private static HeadDictionary blockMap;
 	private static List<ItemStack> loadedHeads;
 
-	public static final ItemGroup SCHNABEL_HEADS = FabricItemGroupBuilder.create(new Identifier(MODID, "heads"))
-			.icon(() -> classicHead()).appendItems(stacks -> {
+	private static final Identifier CREATIVE_TAB_ID = new Identifier(MODID, "heads");
+	public static final ItemGroup SCHNABEL_HEADS = FabricItemGroup.builder()
+			.icon(() -> classicHead())
+			.displayName(Text.translatable("itemGroup.schnabelheads.heads"))
+			.entries((context, stacks) -> {
 				stacks.addAll(loadedHeads);
 			}).build();
 
@@ -75,6 +79,7 @@ public class HeadsMod implements ModInitializer {
 				new KeyBinding("key.schnabelheads.pickHead", GLFW.GLFW_KEY_V, "category.schnabelheads.keybinds"));
 		saveHead = KeyBindingHelper.registerKeyBinding(
 				new KeyBinding("key.schnabelheads.saveHead", GLFW.GLFW_KEY_B, "category.schnabelheads.keybinds"));
+		Registry.register(Registries.ITEM_GROUP, CREATIVE_TAB_ID, SCHNABEL_HEADS);
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (pickHead.wasPressed()) {
 				onPickHeadPressed(client);
@@ -94,7 +99,7 @@ public class HeadsMod implements ModInitializer {
 			BlockPos pos = ((BlockHitResult) raycast).getBlockPos();
 			BlockState blockState = client.world.getBlockState(pos);
 			Block block = blockState.getBlock();
-			Identifier id = Registry.BLOCK.getId(block);
+			Identifier id = Registries.BLOCK.getId(block);
 			List<ItemStack> availableHeads = blockMap.get(id.getPath());
 
 			if (block == Blocks.PLAYER_HEAD || block == Blocks.PLAYER_WALL_HEAD) {
@@ -105,7 +110,7 @@ public class HeadsMod implements ModInitializer {
 					if (skullBE.getOwner() != null && skullBE.getOwner().getProperties() != null) {
 						ArrayList<Property> textures = Lists
 								.newArrayList(skullBE.getOwner().getProperties().get("textures"));
-						String texture = textures.get(0).getValue();
+						String texture = textures.get(0).value();
 						if (texture.startsWith("\"") && texture.endsWith("\"")) {
 							texture = texture.substring(1, texture.length() - 1);
 						}
@@ -181,13 +186,13 @@ public class HeadsMod implements ModInitializer {
 		return ItemStack.EMPTY;
 	}
 
-	private static List<ItemStack> addEmptySlots(int n) {
+	/*private static List<ItemStack> addEmptySlots(int n) {
 		List<ItemStack> list = new ArrayList<ItemStack>();
 		for (int i = 0; i < n; i++) {
 			list.add(ItemStack.EMPTY);
 		}
 		return list;
-	}
+	}*/
 
 	private static ItemStack getHead(String url, String name, String setName) {
 		NbtCompound tag = new NbtCompound();
@@ -225,6 +230,7 @@ public class HeadsMod implements ModInitializer {
 		return stack;
 	}
 
+	@SuppressWarnings("deprecation")
 	private static ArrayList<JsonObject> loadHeadData() {
 		ArrayList<JsonObject> sets = new ArrayList<JsonObject>();
 		String mcDir = MinecraftClient.getInstance().runDirectory.getPath();
@@ -288,8 +294,8 @@ public class HeadsMod implements ModInitializer {
 						});
 					}
 				}
-				int num = heads.size();
-				stacks.addAll(addEmptySlots(9 - num % 9));
+				//int num = heads.size();
+				//stacks.addAll(addEmptySlots(9 - num % 9));
 			} catch (Exception e) {
 				e.printStackTrace();
 				Text emsg = Text.of("\u00A7cError loading heads");
