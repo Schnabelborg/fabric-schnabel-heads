@@ -92,7 +92,7 @@ public class HeadSelectionScreen extends Screen {
 	}
 
 	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double scrollAmount) {
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollAmount) {
 		if (this.accumulatedScrollDelta != 0.0D && Math.signum(scrollAmount) != Math.signum(this.accumulatedScrollDelta)) {
 			this.accumulatedScrollDelta = 0.0D;
 		}

@@ -13,7 +13,7 @@
     "sources": "https://github.com/Schnabelborg/fabric-schnabel-heads"
   },
 
-  "license": "CC0-1.0",
+  "license": "GNU3",
   "icon": "assets/schnabelheads/icon.png",
 
   "environment": "*",
@@ -25,10 +25,7 @@
 
   "depends": {
     "fabricloader": ">=0.15.3",
-    "fabric": "*",
-    "minecraft": "1.20.4"
-  },
-  "suggests": {
-    "another-mod": "*"
+    "fabric-api": ">=0.83.0+1.20",
+    "minecraft": ">=1.20 <1.20.2"
   }
 }
