@@ -110,7 +110,7 @@ public class HeadsMod implements ModInitializer {
 					if (skullBE.getOwner() != null && skullBE.getOwner().getProperties() != null) {
 						ArrayList<Property> textures = Lists
 								.newArrayList(skullBE.getOwner().getProperties().get("textures"));
-						String texture = textures.get(0).getValue();
+						String texture = textures.get(0).value();
 						if (texture.startsWith("\"") && texture.endsWith("\"")) {
 							texture = texture.substring(1, texture.length() - 1);
 						}
